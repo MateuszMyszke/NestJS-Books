@@ -1,5 +1,5 @@
-import { ConflictException, Injectable, BadRequestException } from '@nestjs/common';
-import { Book } from '@prisma/client';
+import { ConflictException, Injectable, BadRequestException, NotFoundException } from '@nestjs/common';
+import { Book, User } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
@@ -51,6 +51,21 @@ export class BooksService {
         ...otherData,
         author: {
           connect: { id: authorId },
+        },
+      },
+    });
+  }
+
+  public async like(bookId: Book['id'], userId: User['id']): Promise<Book> {
+    return await this.prismaService.book.update({
+      where: { id: bookId },
+      data: {
+        users: {
+          create: {
+            user: {
+              connect: { id: userId },
+            },
+          },
         },
       },
     });

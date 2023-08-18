@@ -4,12 +4,13 @@ import { CreateBookDTO } from './dtos/create-book.dto';
 import { UpdateBookDTO } from './dtos/update-book.dto';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 
+
 @Controller('books')
 export class BooksController {
   constructor(private booksService: BooksService){}
 
   @Get('/')
-  getAll(){
+  getAll() {
     return this.booksService.getAll();
   }
 
@@ -43,4 +44,11 @@ export class BooksController {
     await this.booksService.updateById(id, bookData);
     return { success: true };
   }
+
+  @Post('/like/')
+  @UseGuards(JwtAuthGuard)
+  async like(
+    @Param('bookId', new ParseUUIDPipe()) bookId: string,
+    @Param('userId', new ParseUUIDPipe()) userId: string,
+  ) {}
 }
